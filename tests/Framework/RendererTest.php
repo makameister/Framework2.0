@@ -10,8 +10,7 @@ class RendererTest extends TestCase
 
     public function setUp()
     {
-        $this->renderer = new Renderer();
-        $this->renderer->addPath(__Dir__. '/views');
+        $this->renderer = new Renderer\PHPRenderer(__Dir__. '/views');
     }
 
     public function testRenderTheRightPath()

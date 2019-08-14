@@ -1,9 +1,9 @@
 <?php
-namespace Framework;
+namespace Framework\Renderer;
 
-use phpDocumentor\Reflection\Types\Void_;
+use Framework\Renderer\RendererInterface;
 
-class Renderer
+class PHPRenderer implements RendererInterface
 {
     const DEFAULT_NAMESPACE = '__MAIN';
 
@@ -14,6 +14,13 @@ class Renderer
      * @var array
      */
     private $globals = [];
+
+    public function __construct(?string $defaultPath = null)
+    {
+        if (!is_null($defaultPath)) {
+            $this->addPath($defaultPath);
+        }
+    }
 
     /**
      * Allow to add route to load views
