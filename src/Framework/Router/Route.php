@@ -26,7 +26,7 @@ class Route
     public function __construct(string $name, callable $callback, array $parameters)
     {
         $this->name = $name;
-        $this->callable = $callback;
+        $this->callback = $callback;
         $this->parameters = $parameters;
     }
 

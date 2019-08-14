@@ -50,6 +50,6 @@ class Router
 
     public function generateUri(string $name, array $params): ?string
     {
-        $this->router->generateUri($name, $params);
+        return $this->router->generateUri($name, $params);
     }
 }
