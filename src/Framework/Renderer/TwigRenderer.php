@@ -17,9 +17,9 @@ class TwigRenderer implements RendererInterface
     }
 
     /**
-     * Allow to add route to load views
      * @param string $namespace
-     * @param null|string $path
+     * @param string|null $path
+     * @throws \Twig_Error_Loader
      */
     public function addPath(string $namespace, ?string $path = null): void
     {

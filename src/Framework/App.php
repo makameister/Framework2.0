@@ -17,7 +17,7 @@ class App
     private $modules = [];
 
     /**
-     * Router
+     * Conteneur de dependances
      * @var ContainerInterface
      */
     private $container;
@@ -64,5 +64,13 @@ class App
         } else {
             throw new Exception('The response is not a string or an instance of ResponseInterface');
         }
+    }
+
+    /**
+     * @return containerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
     }
 }

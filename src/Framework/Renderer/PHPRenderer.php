@@ -64,6 +64,7 @@ class PHPRenderer implements RendererInterface
      * Permet de rajouter des variables globales à toutes les vues
      * @param string $key
      * @param mixed $value
+     * @return Void
      */
     public function addGlobal(string $key, $value): Void
     {
