@@ -3,11 +3,11 @@
 
 namespace App\Blog\Actions;
 
-
 use App\Blog\Table\PostTable;
 use Framework\Actions\RouterAwareAction;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
+use Framework\Session\FlashService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -29,6 +29,11 @@ class AdminBlogAction
     private $router;
 
     /**
+     * @var FlashService
+     */
+    private $flash;
+
+    /**
      * Inject le RouterAware
      */
     use RouterAwareAction;
@@ -38,12 +43,18 @@ class AdminBlogAction
      * @param RendererInterface $renderer
      * @param Router $router
      * @param PostTable $postTable
+     * @param FlashService $flash
      */
-    public function __construct(RendererInterface $renderer, Router $router, PostTable $postTable)
-    {
+    public function __construct(
+        RendererInterface $renderer,
+        Router $router,
+        PostTable $postTable,
+        FlashService $flash
+    ) {
         $this->renderer = $renderer;
         $this->postTable = $postTable;
         $this->router = $router;
+        $this->flash = $flash;
     }
 
     /**
@@ -86,6 +97,7 @@ class AdminBlogAction
             $params = $this->getParams($request);
             $params['updated_at'] = date('Y-m-d H:i:s');
             $this->postTable->update($item->id, $params);
+            $this->flash->success('L\'article a bien été modifié !');
             return $this->redirect('blog.admin.index');
         }
         return $this->renderer->render('@blog/admin/edit', compact('item'));
@@ -104,6 +116,7 @@ class AdminBlogAction
                 'created_at' => date('Y-m-d H:i:s')
             ]);
             $this->postTable->insert($params);
+            $this->flash->success('L\'article a bien été crée !');
             return $this->redirect('blog.admin.index');
         }
         return $this->renderer->render('@blog/admin/create', compact('item'));
