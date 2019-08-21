@@ -3,10 +3,36 @@
 {% block title "Mes articles" %}
 
 {% block body %}
-    <h1>Bienvenue sur le Blog (template)</h1>
-    <ul>
-        {% for post in posts %}
-            <li><a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}">{{  post.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="container-fluid">
+        <div class="row" style="margin-top: 30px;">
+            <h1>Bienvenue sur le Blog (template)</h1>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            {% for row in posts | batch(3) %}
+                <div class="card-deck" style="margin-top: 10px;">
+                    {% for post in row %}
+                        <div class="card">
+                            <div class="card-header">
+                                <h4><a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}">{{ post.name }}</a></h4>
+                            </div>
+                            <div class="card-block" style="height: 120px;">
+                                <p class="card-text">
+                                    {{ post.content | nl2br | excerpt }}
+                                </p>
+                                <p class="text-muted">{{ post.created_at | ago }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}" class="btn btn-primary">Voir l'article</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <div class="mx-auto">
+                {{  paginate(posts, 'blog.index') }}
+            </div>
+        </div>
+    </div>
 {% endblock body %}
