@@ -7,8 +7,8 @@
         <div class="row" style="margin-top: 30px;">
             <h1>Ajouter un article</h1>
         </div>
-        <form action="{{ path('blog.admin.create') }}" method="POST">
-            {% include '@blog/admin/form.twig' %}
+        <form action="{{ path(routePrefix ~ '.create') }}" method="POST">
+            {% include viewPath ~ '/form.twig' %}
             <button class="btn btn-primary" type="submit">Editer</button>
         </form>
     </div>

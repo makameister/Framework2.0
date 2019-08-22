@@ -117,6 +117,28 @@ class Validator
         return $this;
     }
 
+    /**
+     * Vérifie si un enregistrement exist en BDD
+     * @param string $key
+     * @param string $table
+     * @param \PDO $pdo
+     * @return Validator
+     */
+    public function exists(string $key, string $table, \PDO $pdo): self
+    {
+        $value = $this->getValue($key);
+        $statement = $pdo->prepare("SELECT id FROM $table WHERE id = ?");
+        $statement->execute([$value]);
+        if ($statement->fetchColumn() === false) {
+            $this->addError($key, 'exists', [$table]);
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie si des erreurs sont présentes
+     * @return bool
+     */
     public function isValid(): bool
     {
         return empty($this->errors);

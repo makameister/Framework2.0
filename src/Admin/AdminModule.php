@@ -3,7 +3,6 @@ namespace App\Admin;
 
 use Framework\Module;
 use Framework\Renderer\RendererInterface;
-use Psr\Container\ContainerInterface;
 
 class AdminModule extends Module
 {

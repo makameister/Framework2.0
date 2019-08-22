@@ -4,11 +4,9 @@ namespace App\Blog\Actions;
 use App\Blog\Table\PostTable;
 use Framework\Actions\RouterAwareAction;
 use Framework\Router;
-use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Framework\Renderer\RendererInterface;
-use \PDO;
 
 class BlogAction
 {

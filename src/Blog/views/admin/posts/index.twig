@@ -7,11 +7,12 @@
         <div class="row" style="margin-top: 30px;">
             <h1>Posts Administration</h1>
         </div>
-        <p class="text-right"><a href="{{ path('blog.admin.create') }}" class="btn btn-primary">Ajouter un article</a></p>
+        <p class="text-right"><a href="{{ path(routePrefix ~ '.create') }}" class="btn btn-primary">Ajouter un article</a></p>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <td>Titre</td>
+                    <td>Catégorie</td>
                     <td>Actions</td>
                 </tr>
             </thead>
@@ -19,9 +20,10 @@
                 {% for item in items %}
                     <tr>
                         <td>{{ item.name }}</td>
+                        <td>{{ item.category_name }}</td>
                         <td>
-                            <a href="{{ path('blog.admin.edit', {id: item.id}) }}" class="btn btn-primary">Editer</a>
-                            <form action="{{ path('blog.admin.delete', {id: item.id}) }}" method="POST" style="display: inline;" onsubmit="return confirm('Etes-vous sûr ?')">
+                            <a href="{{ path(routePrefix ~ '.edit', {id: item.id}) }}" class="btn btn-primary">Editer</a>
+                            <form action="{{ path(routePrefix ~ '.delete', {id: item.id}) }}" method="POST" style="display: inline;" onsubmit="return confirm('Etes-vous sûr ?')">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button class="btn btn-danger">Supprimer</button>
                             </form>
@@ -31,7 +33,7 @@
             </tbody>
         </table>
         <div class="mx-auto">
-            {{  paginate(items, 'blog.admin.index') }}
+            {{  paginate(items, routePrefix ~ '.index') }}
         </div>
     </div>
 {% endblock body %}
