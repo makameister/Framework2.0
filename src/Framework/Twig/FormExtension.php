@@ -85,7 +85,7 @@ class FormExtension extends \Twig_Extension
     {
         $htmlOptions = array_reduce(array_keys($options), function (string $html, string $key) use ($options, $value) {
             $params = ['value' => $key, 'selected' => $key === $value];
-            return $html . '<option value="' . $this->getHtmlFromArray($params) . '">' . $options[$key] . '</option>';
+            return $html . '<option ' . $this->getHtmlFromArray($params) . '>' . $options[$key] . '</option>';
         }, "");
         return "<select " . $this->getHtmlFromArray($attributes) . ">$htmlOptions</select>";
     }

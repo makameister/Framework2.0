@@ -2,8 +2,10 @@
 namespace App\Blog;
 
 use App\Blog\Actions\CategoryCrudAction;
+use App\Blog\Actions\CategoryShowAction;
 use App\Blog\Actions\PostCrudAction;
-use App\Blog\Actions\BlogAction;
+use App\Blog\Actions\PostIndexAction;
+use App\Blog\Actions\PostShowAction;
 use Framework\Module;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
@@ -35,8 +37,11 @@ class BlogModule extends Module
     public function __construct(string $prefix, Router $router, RendererInterface $renderer)
     {
         $renderer->addPath('blog', __DIR__ . '/views');
-        $router->get($prefix, BlogAction::class, 'blog.index');
-        $router->get($prefix . '/blog/{slug:[a-z\-0-9]+}-{id:[0-9]+}', BlogAction::class, 'blog.show');
+
+        $router->get($prefix, PostIndexAction::class, 'blog.index');
+        $router->get($prefix . '/{slug:[a-z\-0-9]+}-{id:[0-9]+}', PostShowAction::class, 'blog.show');
+        $router->get($prefix . '/category/{slug:[a-z\-0-9]+}', CategoryShowAction::class, 'blog.category');
+
         $router->crud('/admin/posts', PostCrudAction::class, 'blog.admin');
         $router->crud('/admin/categories', CategoryCrudAction::class, 'blog.category.admin');
     }

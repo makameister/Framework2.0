@@ -8,10 +8,10 @@ class Table
     /**
      * @var \PDO
      */
-    private $pdo;
+    protected $pdo;
 
     /**
-     * Nom de la table db
+     * Nom de la table en db
      * @var string
      */
     protected $table;
@@ -48,6 +48,7 @@ class Table
     }
 
     /**
+     * Requête de pagination
      * @return string
      */
     protected function paginationQuery():string
@@ -56,7 +57,31 @@ class Table
     }
 
     /**
-     * Récupère une liste clé/valeur de nos enregistrement
+     * Récupère un enregistrement (tuple)
+     * @param int $id
+     * @return mixed
+     * @throws NoRecordException
+     */
+    public function find(int $id)
+    {
+        return $this->fetchOrFail("SELECT * FROM {$this->table} WHERE id = ?", [$id]);
+    }
+
+    /**
+     * Récupère une ligne par rapport à un champs
+     * Récupère un tuple
+     * @param string $field
+     * @param string $value
+     * @return mixed
+     * @throws NoRecordException
+     */
+    public function findBy(string $field, string $value)
+    {
+        return $this->fetchOrFail("SELECT * FROM {$this->table} WHERE $field = ?", [$value]);
+    }
+
+    /**
+     * Récupère une liste clé/valeur des enregistrements de la table
      * @return array
      */
     public function findList(): array
@@ -71,18 +96,41 @@ class Table
     }
 
     /**
-     * Récupère un tuple
-     * @param int $id
-     * @return mixed
+     * Récupère tous les éléments de la table
+     * @return array
      */
-    public function find(int $id)
+    public function findAll(): array
     {
-        $query = $this->pdo->prepare("SELECT * FROM {$this->table} WHERE id = ?");
-        $query->execute([$id]);
+        $statement = $this->pdo->query("SELECT * FROM {$this->table}");
         if ($this->entity) {
-            $query->setFetchMode(\PDO::FETCH_CLASS, $this->entity);
+            $statement->setFetchMode(\PDO::FETCH_CLASS, $this->entity);
+        } else {
+            $statement->setFetchMode(\PDO::FETCH_OBJ);
         }
-        return $query->fetch() ?: null;
+        return $statement->fetchAll();
+    }
+
+    /**
+     * Execute une requête et récupère le premier résultat
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     * @throws NoRecordException
+     */
+    protected function fetchOrFail(string $query, array $params = [])
+    {
+        $statement = $this->pdo->prepare($query);
+        $statement->execute($params);
+        if ($this->entity) {
+            $statement->setFetchMode(\PDO::FETCH_CLASS, $this->entity);
+        } else {
+            $statement->setFetchMode(\PDO::FETCH_OBJ);
+        }
+        $result = $statement->fetch();
+        if ($result === false) {
+            throw new NoRecordException();
+        }
+        return $result;
     }
 
     /**
@@ -147,7 +195,7 @@ class Table
     }
 
     /**
-     * Retourne la table utilisée dans la requête
+     * Retourne la table utilisée dans l'instance
      * @return string
      */
     public function getTable(): string
@@ -156,7 +204,7 @@ class Table
     }
 
     /**
-     * Retourne l'entité utilisée dans la requête
+     * Retourne l'entité utilisée dans l'instance
      * @return string
      */
     public function getEntity(): string
@@ -165,6 +213,7 @@ class Table
     }
 
     /**
+     * Retourne l'instance de PDO
      * @return \PDO
      */
     public function getPdo(): \PDO

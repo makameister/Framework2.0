@@ -3,7 +3,7 @@
 
 namespace Tests\App\Actions\Blog;
 
-use App\Blog\Actions\BlogAction;
+use App\Blog\Actions\PostShowAction;
 use App\Blog\Table\PostTable;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 class BlogActionTest extends TestCase
 {
     /**
-     * @var BlogAction
+     * @var PostShowAction
      */
     private $action;
 
@@ -28,7 +28,7 @@ class BlogActionTest extends TestCase
         $this->renderer = $this->prophesize(RendererInterface::class);
         $this->postTable = $this->prophesize(PostTable::class);
         $this->router = $this->prophesize(Router::class);
-        $this->action = new BlogAction(
+        $this->action = new PostShowAction(
             $this->renderer->reveal(),
             $this->postTable->reveal(),
             $this->router->reveal()

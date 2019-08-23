@@ -18,7 +18,7 @@ return [
     'database.username' => 'root',
     'database.password' => '',
     'database.name' => 'ps.db',
-    'blog.prefix' => '/news',
+    'blog.prefix' => '/blog',
     'admin.prefix' => '/admin',
     'views.path' => dirname(__DIR__) . '/views',
     'twig.extensions' => [

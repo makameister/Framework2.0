@@ -19,7 +19,7 @@ class CrudAction
     /**
      * @var Table
      */
-    private $table;
+    protected $table;
 
     /**
      * @var Router
@@ -128,6 +128,7 @@ class CrudAction
     /**
      * @param Request $request
      * @return ResponseInterface|string
+     * @throws \Framework\Database\NoRecordException
      */
     public function edit(Request $request)
     {
