@@ -25,6 +25,11 @@ class BlogWidget implements AdminWidgetInterface
     public function render(): string
     {
         $count = $this->postTable->count();
-        return $this->renderer->render('@blog/admin/widget');
+        return $this->renderer->render('@blog/admin/widget', compact('count'));
+    }
+
+    public function renderMenu(): string
+    {
+        return $this->renderer->render('@blog/admin/menu');
     }
 }
