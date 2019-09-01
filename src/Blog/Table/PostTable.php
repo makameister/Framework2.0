@@ -74,8 +74,4 @@ class PostTable extends Table
         return "SELECT p.id, p.name, c.name category_name FROM {$this->table} as p
                 LEFT JOIN categories as c ON p.category_id = c.id ORDER BY created_at DESC";
     }
-
-    public function count()
-    {
-    }
 }

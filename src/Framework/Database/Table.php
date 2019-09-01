@@ -57,6 +57,15 @@ class Table
     }
 
     /**
+     * Récupère le nombre d'enregistrement
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->fetchColumn("SELECT COUNT(id) FROM {$this->table}");
+    }
+
+    /**
      * Récupère un enregistrement (tuple)
      * @param int $id
      * @return mixed
@@ -108,6 +117,22 @@ class Table
             $statement->setFetchMode(\PDO::FETCH_OBJ);
         }
         return $statement->fetchAll();
+    }
+
+    /**
+     * Récupère la première colonne
+     * @param string $query
+     * @param array $params
+     * @return mixed
+     */
+    private function fetchColumn(string $query, array $params = [])
+    {
+        $statement = $this->pdo->prepare($query);
+        $statement->execute($params);
+        if ($this->entity) {
+            $statement->setFetchMode(\PDO::FETCH_CLASS, $this->entity);
+        }
+        return $statement->fetchColumn();
     }
 
     /**

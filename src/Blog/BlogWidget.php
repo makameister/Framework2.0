@@ -1,6 +1,7 @@
 <?php
-namespace App\Admin;
+namespace App\Blog;
 
+use App\Admin\AdminWidgetInterface;
 use App\Blog\Table\PostTable;
 use Framework\Renderer\RendererInterface;
 
