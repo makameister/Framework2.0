@@ -112,7 +112,7 @@ class CsrfMiddleware implements MiddlewareInterface
     private function validSession($session)
     {
         if (!is_array($session) && !$session instanceof \ArrayAccess) {
-            throw new \TypeError('La session passée au middleware csrf n\'est pas traitable come un tableau');
+            throw new \TypeError('La session passée au middleware csrf n\'est pas traitable comme un tableau');
         }
     }
 

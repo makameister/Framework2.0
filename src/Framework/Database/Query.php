@@ -19,6 +19,8 @@ class Query
 
     private $params;
 
+    private $entity;
+
     public function __construct(?\PDO $pdo = null)
     {
         $this->pdo = $pdo;
@@ -56,6 +58,20 @@ class Query
     {
         $this->params = $params;
         return this;
+    }
+
+    public function into(string $entity): self
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    public function all(): QueryResult
+    {
+        return new QueryResult(
+            $this->execute()->fetchAll(\PDO::FETCH_ASSOC),
+            $this->entity
+        );
     }
 
     public function __toString(): string
