@@ -3,11 +3,13 @@ namespace Framework;
 
 use DI\ContainerBuilder;
 use Exception;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Container\containerInterface;
 
-class App
+class App implements DelegateInterface
 {
 
     /**
@@ -76,12 +78,13 @@ class App
     public function process(ServerRequestInterface $request): ResponseInterface
     {
         $middleware = $this->getMiddleware();
-        /*
         if (is_null($middleware)) {
             throw new \Exception("Aucun middleware a intercepté cette requête !");
+        } elseif (is_callable($middleware)) {
+            return call_user_func_array($middleware, [$request, [$this, 'process']]);
+        } elseif ($middleware instanceof MiddlewareInterface) {
+            return $middleware->process($request, $this);
         }
-        */
-        return call_user_func_array($middleware, [$request, [$this, 'process']]);
     }
 
     public function run(ServerRequestInterface $request): ResponseInterface
@@ -110,7 +113,10 @@ class App
         return $this->container;
     }
 
-    private function getMiddleware(): ?callable
+    /**
+     * @return object
+     */
+    private function getMiddleware(): object
     {
         if (array_key_exists($this->index, $this->middlewares)) {
             $middleware = $this->container->get($this->middlewares[$this->index]);

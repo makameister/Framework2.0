@@ -2,6 +2,7 @@
 
 namespace Framework\Middleware;
 
+use DI\Container;
 use Framework\Router\Route;
 use GuzzleHttp\Psr7\Response;
 use Psr\Container\ContainerInterface;
@@ -15,7 +16,7 @@ class DispatcherMiddleware
      */
     private $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
     }
@@ -36,7 +37,7 @@ class DispatcherMiddleware
         } elseif ($response instanceof ResponseInterface) {
             return $response;
         } else {
-            throw new Exception('The response is not a string or an instance of ResponseInterface');
+            throw new \Exception('The response is not a string or an instance of ResponseInterface');
         }
     }
 }
