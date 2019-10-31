@@ -16,6 +16,8 @@ class Post
 
     public $updatedAt;
 
+    public $image;
+
     public function setCreatedAt($datetime)
     {
         if (is_string($datetime)) {
@@ -28,5 +30,10 @@ class Post
         if (is_string($datetime)) {
             $this->updatedAt = new \DateTime($datetime);
         }
+    }
+
+    public function getThumb()
+    {
+        return 'uploads/posts/' . $this->image;
     }
 }

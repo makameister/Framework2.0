@@ -10,5 +10,15 @@
         {{ field('slug', item.slug, "Lien") }}
     </div>
 </div>
+<div class="row">
+    <div class="col-md-4">
+        {{ field('image', item.slug, "Image", {type: 'file'}) }}
+    </div>
+    <div class="col-md-6">
+        {% if item.image %}
+            <img src="{{ item.thumb }}" alt="" style="width: 60%">
+        {% endif %}
+    </div>
+</div>
 {{ field('content', item.content, "Content", {type: 'textarea'}) }}
 {{ field('created_at', item.created_at, "Date de création", {class: 'datepicker'}) }}

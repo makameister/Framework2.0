@@ -78,6 +78,7 @@ class CrudAction
     /**
      * @param Request $request
      * @return ResponseInterface|string
+     * @throws \Framework\Database\NoRecordException
      */
     public function __invoke(Request $request)
     {
@@ -112,15 +113,14 @@ class CrudAction
     {
         $item = $this->getNewEntity();
         if ($request->getMethod() === 'POST') {
-            $params = $this->getParams($request);
             $validator = $this->getValidator($request);
             if (!empty($validator->isValid())) {
-                $this->table->insert($params);
+                $this->table->insert($this->getParams($request));
                 $this->flash->success($this->messages['create']);
                 return $this->redirect($this->routePrefix . '.index');
             }
             $errors = $validator->getErrors();
-            $item = $params;
+            $item = $request->getParsedBody();
         }
         return $this->renderer->render($this->viewPath . '/create', $this->formParams(compact('item', 'errors')));
     }
@@ -134,7 +134,7 @@ class CrudAction
     {
         $item = $this->table->find($request->getAttribute('id'));
         if ($request->getMethod() === 'POST') {
-            $params = $this->getParams($request);
+            $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
             $validator = $this->getValidator($request);
             if (!empty($validator->isValid())) {
                 $this->table->update($item->id, $params);
@@ -142,6 +142,7 @@ class CrudAction
                 return $this->redirect($this->routePrefix . '.index');
             }
             $errors = $validator->getErrors();
+            $params = $request->getParsedBody();
             $params['id'] = $item->id;
             $item = $params;
         }
@@ -177,7 +178,7 @@ class CrudAction
      */
     protected function getValidator(Request $request): Validator
     {
-        return new Validator($request->getParsedBody());
+        return new Validator(array_merge($request->getParsedBody(), $request->getUploadedFiles()));
     }
 
     /**

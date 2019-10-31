@@ -15,12 +15,12 @@ class FormExtension extends \Twig_Extension
 
     /**
      * Renvoie un champs de formulaire (Boostrap 4)
-     * @param array $context
-     * @param string $key
-     * @param mixed $value
-     * @param string $label
-     * @param array $options
-     * @return string
+     * @param array $context : Renseigne
+     * @param string $key : Renseigne l'id et le nom
+     * @param mixed $value : Renseigne la valeur dans le cas d'une modfication
+     * @param string $label : Renseigne le label à afficher
+     * @param array $options : Renseigne la liste des options (select)
+     * @return string : Le champs
      */
     public function field(array $context, string $key, $value, ?string $label = null, array $options = [])
     {
@@ -36,10 +36,11 @@ class FormExtension extends \Twig_Extension
         if ($error) {
             $class .= ' has-danger';
             $attributes['class'] .= ' is-invalid';
-
         }
         if ($type === 'textarea') {
             $input = $this->textarea($value, $attributes);
+        } elseif ($type === 'file') {
+            $input = $this->file($attributes);
         } elseif (array_key_exists('options', $options)) {
             $input = $this->select($value, $options['options'], $attributes);
         } else {
@@ -88,6 +89,11 @@ class FormExtension extends \Twig_Extension
             return $html . '<option ' . $this->getHtmlFromArray($params) . '>' . $options[$key] . '</option>';
         }, "");
         return "<select " . $this->getHtmlFromArray($attributes) . ">$htmlOptions</select>";
+    }
+
+    private function file(array $attributes): string
+    {
+        return "<input type=\"file\" " . $this->getHtmlFromArray($attributes) . ">";
     }
 
     /**

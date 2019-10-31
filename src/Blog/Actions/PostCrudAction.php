@@ -2,6 +2,7 @@
 namespace App\Blog\Actions;
 
 use App\Blog\Entity\Post;
+use App\Blog\PostUpload;
 use App\Blog\Table\CategoryTable;
 use App\Blog\Table\PostTable;
 use Framework\Actions\CrudAction;
@@ -29,22 +30,30 @@ class PostCrudAction extends CrudAction
     private $categoryTable;
 
     /**
+     * @var PostUpload
+     */
+    private $postUpload;
+
+    /**
      * PostCrudAction constructor.
      * @param RendererInterface $renderer
      * @param Router $router
      * @param PostTable $table
      * @param FlashService $flash
      * @param CategoryTable $categoryTable Table qui gère les categories des posts
+     * @param PostUpload $postUpload
      */
     public function __construct(
         RendererInterface $renderer,
         Router $router,
         PostTable $table,
         FlashService $flash,
-        CategoryTable $categoryTable
+        CategoryTable $categoryTable,
+        PostUpload $postUpload
     ) {
         parent::__construct($renderer, $router, $table, $flash);
         $this->categoryTable = $categoryTable;
+        $this->postUpload = $postUpload;
     }
 
     /**
@@ -71,8 +80,11 @@ class PostCrudAction extends CrudAction
      */
     protected function getParams(ServerRequestInterface $request): array
     {
-        $params = array_filter($request->getParsedBody(), function ($key) {
-            return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id']);
+        $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
+        //Upload du fichier
+        $params['image'] = $this->postUpload->upload($params['image']);
+        $params = array_filter($params, function ($key) {
+            return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image']);
         }, ARRAY_FILTER_USE_KEY);
         return array_merge($params, [
             'updated_at' => date('Y-m-d H:i:s')
@@ -85,13 +97,18 @@ class PostCrudAction extends CrudAction
      */
     protected function getValidator(ServerRequestInterface $request): Validator
     {
-        return parent::getValidator($request)
+        $validator = parent::getValidator($request)
             ->required('content', 'name', 'slug', 'category_id')
             ->length('content', 10, 250)
             ->length('name', 2, 25)
             ->length('slug', 2, 50)
             ->exists('category_id', $this->categoryTable->getTable(), $this->categoryTable->getPdo())
             ->dateTime('created_at')
+            ->extension('image', ['jpg', 'png'])
             ->slug('slug');
+        if (is_null($request->getAttribute('id'))) {
+            $validator->uploaded('image');
+        }
+        return $validator;
     }
 }
