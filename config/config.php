@@ -4,6 +4,7 @@ use Framework\Middleware\CsrfMiddleware;
 use Framework\Renderer\RendererInterface;
 use Framework\Renderer\TwigRendererFactory;
 use Framework\Router;
+use Framework\Router\RouterFactory;
 use Framework\Router\RouterTwigExtension;
 use Framework\Session\PHPSession;
 use Framework\Session\SessionInterface;
@@ -16,6 +17,7 @@ use Framework\Twig\TimeExtension;
 use Psr\Container\ContainerInterface;
 
 return [
+    'env' => \DI\env('ENV', 'production'),
     'database.host' => 'localhost',
     'database.username' => 'root',
     'database.password' => '',
@@ -34,7 +36,7 @@ return [
     ],
     SessionInterface::class => \DI\Object(PHPSession::class),
     CsrfMiddleware::class => \DI\Object()->constructor(\DI\get(SessionInterface::class)),
-    Router::class => \DI\object(),
+    Router::class => \DI\factory(RouterFactory::class),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),
     \PDO::class => function (ContainerInterface $c) {
         $host = $c->get('database.host');
