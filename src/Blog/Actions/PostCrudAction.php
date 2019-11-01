@@ -56,18 +56,25 @@ class PostCrudAction extends CrudAction
         $this->postUpload = $postUpload;
     }
 
+    public function delete(ServerRequestInterface $request)
+    {
+        $post = $this->table->find($request->getAttribute('id'));
+        $this->postUpload->delete($post->image);
+        return parent::delete($request);
+    }
+
     /**
      * Rajoute des données à la vue (liste des catégories)
      * @param array $params
      * @return array
      */
-    public function formParams(array $params): array
+    protected function formParams(array $params): array
     {
         $params['categories'] = $this->categoryTable->findList();
         return $params;
     }
 
-    public function getNewEntity()
+    protected function getNewEntity()
     {
         $post = new Post();
         $post->created_at = new \DateTime();

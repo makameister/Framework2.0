@@ -39,10 +39,11 @@ class Upload
         return $targetPath;
     }
 
-    private function delete(?string $oldFile): void
+    public function delete(?string $oldFile): void
     {
         if ($oldFile) {
-            $oldFile = $this->path . DIRECTORY_SEPARATOR . $oldFile;
+            $oldFile = $this->path . '/' . $oldFile;
+            //die();
             if (file_exists($oldFile)) {
                 unlink($oldFile);
             }
