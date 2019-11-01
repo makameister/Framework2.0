@@ -123,7 +123,7 @@ class App implements DelegateInterface
     /**
      * @return object
      */
-    private function getMiddleware(): object
+    private function getMiddleware()
     {
         if (array_key_exists($this->index, $this->middlewares)) {
             $middleware = $this->container->get($this->middlewares[$this->index]);

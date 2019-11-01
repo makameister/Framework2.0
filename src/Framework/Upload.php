@@ -33,7 +33,7 @@ class Upload
     {
         if (file_exists($targetPath)) {
             $info = pathinfo($targetPath);
-            $targetPath = $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '_copy' . $info['extension'];
+            $targetPath = $info['dirname'] . DIRECTORY_SEPARATOR . $info['filename'] . '_copy.' . $info['extension'];
             return $this->addSuffix($targetPath);
         }
         return $targetPath;

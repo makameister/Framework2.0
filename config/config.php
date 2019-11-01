@@ -21,7 +21,7 @@ return [
     'database.host' => 'localhost',
     'database.username' => 'root',
     'database.password' => '',
-    'database.name' => 'dbPhinx',
+    'database.name' => 'ps.db',
     'blog.prefix' => '/blog',
     'admin.prefix' => '/admin',
     'views.path' => dirname(__DIR__) . '/views',

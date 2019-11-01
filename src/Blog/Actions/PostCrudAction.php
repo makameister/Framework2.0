@@ -76,13 +76,14 @@ class PostCrudAction extends CrudAction
 
     /**
      * @param ServerRequestInterface $request
+     * @param $post
      * @return array
      */
-    protected function getParams(ServerRequestInterface $request): array
+    protected function getParams(ServerRequestInterface $request, $post): array
     {
         $params = array_merge($request->getParsedBody(), $request->getUploadedFiles());
         //Upload du fichier
-        $params['image'] = $this->postUpload->upload($params['image']);
+        $params['image'] = $this->postUpload->upload($params['image'], $post->image);
         $params = array_filter($params, function ($key) {
             return in_array($key, ['name', 'slug', 'content', 'created_at', 'category_id', 'image']);
         }, ARRAY_FILTER_USE_KEY);

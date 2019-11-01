@@ -34,6 +34,6 @@ class Post
 
     public function getThumb()
     {
-        return 'uploads/posts/' . $this->image;
+        return './public/uploads/posts/' . $this->image;
     }
 }
