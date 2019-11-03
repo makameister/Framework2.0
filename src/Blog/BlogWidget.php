@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Blog;
 
 use App\Admin\AdminWidgetInterface;
@@ -7,11 +8,11 @@ use Framework\Renderer\RendererInterface;
 
 class BlogWidget implements AdminWidgetInterface
 {
+
     /**
      * @var RendererInterface
      */
     private $renderer;
-
     /**
      * @var PostTable
      */

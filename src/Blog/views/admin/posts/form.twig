@@ -1,24 +1,34 @@
 {{ csrf_input() }}
 <div class="row">
-    <div class="col-md-4">
-        {{ field('name', item.name, "Titre de l'article") }}
-    </div>
-    <div class="col-md-4">
-        {{ field('category_id', item.category_id, "Catégorie", {options: categories}) }}
-    </div>
-    <div class="col-md-4">
-        {{ field('slug', item.slug, "Lien") }}
-    </div>
+  <div class="col-md-4">
+    {{ field('name', item.name, "Titre de l'article") }}
+  </div>
+  <div class="col-md-4">
+    {{ field('category_id', item.categoryId, "Catégorie", {options: categories}) }}
+  </div>
+  <div class="col-md-4">
+    {{ field('published', item.published, "En ligne ?", {type: 'checkbox'}) }}
+  </div>
 </div>
 <div class="row">
-    <div class="col-md-4">
-        {{ field('image', item.slug, "Image", {type: 'file'}) }}
+  <div class="col-md-4">
+    {% if item.image %}
+      <img src="{{ item.getImageUrl }}" alt="" style="width:100%;">
+    {% endif %}
+  </div>
+  <div class="col-md-4">
+    <div class="row">
+      {{ field('image', item.getImageUrl, "Image", {type: 'file'}) }}
     </div>
-    <div class="col-md-6">
-        {% if item.image %}
-            <img src="{{ item.thumb }}" alt="" style="width: 60%">
-        {% endif %}
+    <div class="row">
+      {% if item.image %}
+        <input type="text" name="fileUploaded" id="fileUploaded" class="form-control" style="width: 85%;" disabled value="{{ item.getImage }}">
+      {% endif %}
     </div>
+  </div>
+  <div class="col-md-4">
+    {{ field('slug', item.slug, "Lien") }}
+  </div>
 </div>
-{{ field('content', item.content, "Content", {type: 'textarea'}) }}
-{{ field('created_at', item.created_at, "Date de création", {class: 'datepicker'}) }}
+{{ field('content', item.content, "content", {type: 'textarea'}) }}
+{{ field('created_at', item.createdAt, "Date de création", {class: 'datepicker'}) }}

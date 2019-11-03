@@ -1,21 +1,31 @@
 <?php
-
 namespace Framework\Database;
 
-use phpDocumentor\Reflection\Types\Object_;
-
+/**
+ * Représente les résultats d'une requête
+ */
 class QueryResult implements \ArrayAccess, \Iterator
 {
+
     /**
-     * @var array
+     * @var array Les enregistrements
      */
     private $records;
 
-    private $hydratedRecords = [];
+    /**
+     * @var null|string Entité à utiliser pour hydrater nos objets
+     */
+    private $entity;
 
+    /**
+     * @var int Index servant à l'itération
+     */
     private $index = 0;
 
-    private $entity;
+    /**
+     * @var array Sauvegarde les enregistrements déjà hydratés
+     */
+    private $hydratedRecords = [];
 
     public function __construct(array $records, ?string $entity = null)
     {
@@ -23,6 +33,11 @@ class QueryResult implements \ArrayAccess, \Iterator
         $this->entity = $entity;
     }
 
+    /**
+     * Récupère un éléments à l'index définit
+     * @param int $index
+     * @return mixed|null|string
+     */
     public function get(int $index)
     {
         if ($this->entity) {
@@ -36,7 +51,7 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Return the current element
-     * @link https://php.net/manual/en/iterator.current.php
+     * @link http://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      * @since 5.0.0
      */
@@ -47,7 +62,7 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Move forward to next element
-     * @link https://php.net/manual/en/iterator.next.php
+     * @link http://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
@@ -58,7 +73,7 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Return the key of the current element
-     * @link https://php.net/manual/en/iterator.key.php
+     * @link http://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
      * @since 5.0.0
      */
@@ -69,19 +84,19 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Checks if current position is valid
-     * @link https://php.net/manual/en/iterator.valid.php
-     * @return bool The return value will be casted to boolean and then evaluated.
+     * @link http://php.net/manual/en/iterator.valid.php
+     * @return boolean The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      * @since 5.0.0
      */
     public function valid()
     {
-        return isset($this->all()[$this->index]);
+        return isset($this->records[$this->index]);
     }
 
     /**
      * Rewind the Iterator to the first element
-     * @link https://php.net/manual/en/iterator.rewind.php
+     * @link http://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
@@ -92,11 +107,11 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Whether a offset exists
-     * @link https://php.net/manual/en/arrayaccess.offsetexists.php
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
      * @param mixed $offset <p>
      * An offset to check for.
      * </p>
-     * @return bool true on success or false on failure.
+     * @return boolean true on success or false on failure.
      * </p>
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
@@ -109,7 +124,7 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Offset to retrieve
-     * @link https://php.net/manual/en/arrayaccess.offsetget.php
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset <p>
      * The offset to retrieve.
      * </p>
@@ -123,7 +138,7 @@ class QueryResult implements \ArrayAccess, \Iterator
 
     /**
      * Offset to set
-     * @link https://php.net/manual/en/arrayaccess.offsetset.php
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
      * @param mixed $offset <p>
      * The offset to assign the value to.
      * </p>
@@ -131,26 +146,26 @@ class QueryResult implements \ArrayAccess, \Iterator
      * The value to set.
      * </p>
      * @return void
-     * @since 5.0.0
      * @throws \Exception
+     * @since 5.0.0
      */
     public function offsetSet($offset, $value)
     {
-        throw new \Exception("Record can't be altered");
+        throw new \Exception("Can't alter records");
     }
 
     /**
      * Offset to unset
-     * @link https://php.net/manual/en/arrayaccess.offsetunset.php
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
      * @param mixed $offset <p>
      * The offset to unset.
      * </p>
      * @return void
-     * @since 5.0.0
      * @throws \Exception
+     * @since 5.0.0
      */
     public function offsetUnset($offset)
     {
-        throw new \Exception("Record can't be altered");
+        throw new \Exception("Can't alter records");
     }
 }

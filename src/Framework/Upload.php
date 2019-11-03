@@ -8,8 +8,6 @@ class Upload
 {
     protected $path;
 
-    protected $fomats;
-
     public function __construct(?string $path = null)
     {
         if ($path) {
@@ -43,7 +41,6 @@ class Upload
     {
         if ($oldFile) {
             $oldFile = $this->path . '/' . $oldFile;
-            //die();
             if (file_exists($oldFile)) {
                 unlink($oldFile);
             }

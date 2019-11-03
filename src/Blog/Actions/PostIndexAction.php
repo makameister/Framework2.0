@@ -4,11 +4,15 @@ namespace App\Blog\Actions;
 use App\Blog\Table\CategoryTable;
 use App\Blog\Table\PostTable;
 use Framework\Actions\RouterAwareAction;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Framework\Renderer\RendererInterface;
+use Framework\Router;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PostIndexAction
 {
+
     /**
      * @var RendererInterface
      */
@@ -18,7 +22,6 @@ class PostIndexAction
      * @var PostTable
      */
     private $postTable;
-
     /**
      * @var CategoryTable
      */
@@ -26,14 +29,12 @@ class PostIndexAction
 
     use RouterAwareAction;
 
-    /**
-     * BlogAction constructor.
-     * @param RendererInterface $renderer
-     * @param PostTable $postTable
-     * @param CategoryTable $categoryTable
-     */
-    public function __construct(RendererInterface $renderer, PostTable $postTable, CategoryTable $categoryTable)
-    {
+    public function __construct(
+        RendererInterface $renderer,
+        PostTable $postTable,
+        CategoryTable $categoryTable
+    ) {
+    
         $this->renderer = $renderer;
         $this->postTable = $postTable;
         $this->categoryTable = $categoryTable;
@@ -42,8 +43,9 @@ class PostIndexAction
     public function __invoke(Request $request)
     {
         $params = $request->getQueryParams();
-        $posts =  $this->postTable->findPaginatedPublic(12, $params['p'] ?? 1);
+        $posts = $this->postTable->findPublic()->paginate(12, $params['p'] ?? 1);
         $categories = $this->categoryTable->findAll();
+
         return $this->renderer->render('@blog/index', compact('posts', 'categories'));
     }
 }

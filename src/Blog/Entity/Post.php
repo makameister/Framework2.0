@@ -4,6 +4,7 @@ namespace App\Blog\Entity;
 
 class Post
 {
+
     public $id;
 
     public $name;
@@ -32,8 +33,13 @@ class Post
         }
     }
 
-    public function getThumb()
+    public function getImageUrl()
     {
-        return './public/uploads/posts/' . $this->image;
+        return '/uploads/posts/' . $this->image;
+    }
+
+    public function getImage()
+    {
+        return $this->image;
     }
 }

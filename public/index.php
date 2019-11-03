@@ -1,7 +1,11 @@
 <?php
 
 use App\Admin\AdminModule;
+use App\Auth\AuthModule;
+use App\Auth\ForbiddenMiddleware;
 use App\Blog\BlogModule;
+use App\Home\HomeModule;
+use Framework\Auth\LoggedInMiddleware;
 use Framework\Middleware\CsrfMiddleware;
 use Framework\Middleware\DispatcherMiddleware;
 use Framework\Middleware\MethodMiddleware;
@@ -17,19 +21,20 @@ require 'vendor/autoload.php';
 
 putenv('ENV=dev');
 
-$modules = [
-    AdminModule::class,
-    BlogModule::class
-];
-
 $app = (new \Framework\App('config/config.php'))
     ->addModule(AdminModule::class)
     ->addModule(BlogModule::class)
-    ->pipe(Whoops::class)
+    ->addModule(HomeModule::class)
+    ->addModule(AuthModule::class);
+
+$container = $app->getContainer();
+$app->pipe(Whoops::class)
     ->pipe(TrailingSlashMiddleware::class)
     ->pipe(MethodMiddleware::class)
     ->pipe(CsrfMiddleware::class)
     ->pipe(RouterMiddleware::class)
+    ->pipe(ForbiddenMiddleware::class)
+    ->pipe($container->get('admin.prefix'), LoggedInMiddleware::class)
     ->pipe(DispatcherMiddleware::class)
     ->pipe(NotFoundMiddleware::class);
 

@@ -1,17 +1,27 @@
 <?php
 namespace App\Blog\Actions;
 
+use App\Blog\Table\CategoryTable;
 use App\Blog\Table\PostTable;
 use Framework\Actions\RouterAwareAction;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Framework\Renderer\RendererInterface;
+use Framework\Router;
+use GuzzleHttp\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class PostShowAction
 {
+
     /**
      * @var RendererInterface
      */
     private $renderer;
+
+    /**
+     * @var Router
+     */
+    private $router;
 
     /**
      * @var PostTable
@@ -20,17 +30,22 @@ class PostShowAction
 
     use RouterAwareAction;
 
-    /**
-     * BlogAction constructor.
-     * @param RendererInterface $renderer
-     * @param PostTable $postTable
-     */
-    public function __construct(RendererInterface $renderer, PostTable $postTable)
-    {
+    public function __construct(
+        RendererInterface $renderer,
+        Router $router,
+        PostTable $postTable
+    ) {
+    
         $this->renderer = $renderer;
+        $this->router = $router;
         $this->postTable = $postTable;
     }
-
+    /**
+     * Affiche un article
+     *
+     * @param Request $request
+     * @return ResponseInterface|string
+     */
     public function __invoke(Request $request)
     {
         $slug = $request->getAttribute('slug');

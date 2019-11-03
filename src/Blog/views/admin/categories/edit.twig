@@ -3,13 +3,12 @@
 {% block title "Editer la catégorie" %}
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row" style="margin-top: 30px;">
-        <h1>Editer la catégorie {{ item.name }}</h1>
-    </div>
-    <form action="{{ path(routePrefix ~ '.edit', {id: item.id}) }}" method="POST">
-        {% include viewPath ~ '/form.twig' %}
-        <button class="btn btn-primary" type="submit">Créer</button>
-    </form>
-</div>
-{% endblock body %}
+
+  <h1>Editer la catégorie {{ item.name }}</h1>
+
+  <form action="{{ path(routePrefix ~ '.edit', {id: item.id}) }}" method="post">
+    {% include viewPath ~ '/form.twig' %}
+    <button class="btn btn-primary" type="submit">Editer</button>
+  </form>
+
+{% endblock %}
