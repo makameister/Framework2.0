@@ -44,6 +44,7 @@ class FormExtension extends \Twig_Extension
         } elseif (array_key_exists('options', $options)) {
             $input = $this->select($value, $options['options'], $attributes);
         } else {
+            $attributes['type'] = $options['type'] ?? 'null';
             $input = $this->input($value, $attributes);
         }
         return "<div class=\"". $class ."\">
@@ -61,7 +62,7 @@ class FormExtension extends \Twig_Extension
      */
     private function input(?string $value, array $attributes): string
     {
-        return "<input type=\"text\" " . $this->getHtmlFromArray($attributes) . " value=\"{$value}\">";
+        return "<input " . $this->getHtmlFromArray($attributes) . " value=\"{$value}\">";
     }
 
     /**

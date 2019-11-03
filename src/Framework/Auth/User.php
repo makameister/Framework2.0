@@ -8,7 +8,12 @@ interface User
     /**
      * @return string
      */
-    public function getUsername(): string;
+    public function getFirstName(): string;
+
+    /**
+     * @return string
+     */
+    public function getLastName(): string;
 
     /**
      * @return string[]

@@ -5,7 +5,7 @@ class User implements \Framework\Auth\User
 {
     public $id;
 
-    public $username;
+    public $firstname;
 
     public $lastname;
 
@@ -16,9 +16,17 @@ class User implements \Framework\Auth\User
     /**
      * @return string
      */
-    public function getUsername(): string
+    public function getFirstName(): string
     {
-        return $this->username;
+        return $this->firstname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastname(): string
+    {
+        return $this->lastname;
     }
 
     /**

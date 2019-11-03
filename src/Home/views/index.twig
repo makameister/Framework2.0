@@ -3,6 +3,12 @@
 {% block body %}
   <main role="main">
 
+    {% if flash('success') %}
+      <div class="alert alert-success">
+        {{ flash('success') }}
+      </div>
+    {% endif %}
+
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">

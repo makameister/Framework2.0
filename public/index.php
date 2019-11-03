@@ -1,5 +1,6 @@
 <?php
 
+use App\Account\AccountModule;
 use App\Admin\AdminModule;
 use App\Auth\AuthModule;
 use App\Auth\ForbiddenMiddleware;
@@ -10,6 +11,7 @@ use Framework\Middleware\CsrfMiddleware;
 use Framework\Middleware\DispatcherMiddleware;
 use Framework\Middleware\MethodMiddleware;
 use Framework\Middleware\NotFoundMiddleware;
+use Framework\Middleware\RedirectToHomeMiddleware;
 use Framework\Middleware\RouterMiddleware;
 use Framework\Middleware\TrailingSlashMiddleware;
 use GuzzleHttp\Psr7\ServerRequest;
@@ -25,10 +27,12 @@ $app = (new \Framework\App('config/config.php'))
     ->addModule(AdminModule::class)
     ->addModule(BlogModule::class)
     ->addModule(HomeModule::class)
-    ->addModule(AuthModule::class);
+    ->addModule(AuthModule::class)
+    ->addModule(AccountModule::class);
 
 $container = $app->getContainer();
 $app->pipe(Whoops::class)
+    ->pipe(RedirectToHomeMiddleware::class)
     ->pipe(TrailingSlashMiddleware::class)
     ->pipe(MethodMiddleware::class)
     ->pipe(CsrfMiddleware::class)

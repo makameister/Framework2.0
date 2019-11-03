@@ -70,4 +70,10 @@ class DatabaseAuth implements Auth
         }
         return null;
     }
+
+    public function setUser(\App\Auth\User $user): void
+    {
+        $this->session->set('auth.user', $user->id);
+        $this->user = $user;
+    }
 }

@@ -1,14 +1,14 @@
 <?php
+
 namespace Framework;
 
+use Framework\Database\Table;
 use Framework\Validator\ValidationError;
 use Psr\Http\Message\UploadedFileInterface;
 
 class Validator
 {
-    /**
-     * Formats autorisés
-     */
+
     private const MIME_TYPES = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
@@ -31,24 +31,9 @@ class Validator
     }
 
     /**
-     * Vérifie si le champs n'est pas vide
-     * @param string ...$keys
-     * @return Validator
-     */
-    public function notEmpty(string ...$keys): self
-    {
-        foreach ($keys as $key) {
-            $value = $this->getValue($key);
-            if (is_null($value) || empty($value)) {
-                $this->addError($key, 'empty');
-            }
-        }
-        return $this;
-    }
-
-    /**
      * Vérifie que les champs sont présents dans le tableau
-     * @param string ...$keys
+     *
+     * @param string[] ...$keys
      * @return Validator
      */
     public function required(string ...$keys): self
@@ -63,19 +48,29 @@ class Validator
     }
 
     /**
-     * Vérifie le nombre de caractère présetns dans le champs
-     * @param string $key
-     * @param int $min
-     * @param int $max
+     * Vérifie que le champs n'est pas vide
+     *
+     * @param string[] ...$keys
      * @return Validator
      */
+    public function notEmpty(string ...$keys): self
+    {
+        foreach ($keys as $key) {
+            $value = $this->getValue($key);
+            if (is_null($value) || empty($value)) {
+                $this->addError($key, 'empty');
+            }
+        }
+        return $this;
+    }
+
     public function length(string $key, ?int $min, ?int $max = null): self
     {
         $value = $this->getValue($key);
         $length = mb_strlen($value);
         if (!is_null($min) &&
             !is_null($max) &&
-            $length < $min || $length > $max
+            ($length < $min || $length > $max)
         ) {
             $this->addError($key, 'betweenLength', [$min, $max]);
             return $this;
@@ -90,30 +85,13 @@ class Validator
             $length > $max
         ) {
             $this->addError($key, 'maxLength', [$max]);
-            return $this;
-        }
-        return $this;
-    }
-
-    /**
-     * Vérifie le format de la date
-     * @param string $key
-     * @param string $format
-     * @return Validator
-     */
-    public function dateTime(string $key, string $format = 'Y-m-d H:i:s'): self
-    {
-        $value = $this->getValue($key);
-        $date = \DateTime::createFromFormat($format, $value);
-        $errors = \DateTime::getLastErrors();
-        if ($errors['error_count'] > 0 || $errors['warning_count'] > 0 || $date === false) {
-            $this->addError($key, 'datetime', [$format]);
         }
         return $this;
     }
 
     /**
      * Vérifie que l'élément est un slug
+     *
      * @param string $key
      * @return Validator
      */
@@ -128,7 +106,26 @@ class Validator
     }
 
     /**
-     * Vérifie si un enregistrement exist en BDD
+     * Vérifie qu'une date correspond au format demandé
+     *
+     * @param string $key
+     * @param string $format
+     * @return Validator
+     */
+    public function dateTime(string $key, string $format = "Y-m-d H:i:s"): self
+    {
+        $value = $this->getValue($key);
+        $date = \DateTime::createFromFormat($format, $value);
+        $errors = \DateTime::getLastErrors();
+        if ($errors['error_count'] > 0 || $errors['warning_count'] > 0 || $date === false) {
+            $this->addError($key, 'datetime', [$format]);
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie que la clef existe dans la table donnée
+     *
      * @param string $key
      * @param string $table
      * @param \PDO $pdo
@@ -146,15 +143,20 @@ class Validator
     }
 
     /**
-     * Vérifie que la clé est unique
+     * Vérifie que la clef est unique dans la base de donnée
+     *
      * @param string $key
-     * @param string $table
+     * @param string|Table $table
      * @param \PDO $pdo
      * @param int|null $exclude
      * @return Validator
      */
-    public function unique(string $key, string $table, \PDO $pdo, ?int $exclude = null): self
+    public function unique(string $key, $table, ?\PDO $pdo = null, ?int $exclude = null): self
     {
+        if ($table instanceof Table) {
+            $pdo = $table->getPdo();
+            $table = $table->getTable();
+        }
         $value = $this->getValue($key);
         $query = "SELECT id FROM $table WHERE $key = ?";
         $params = [$value];
@@ -171,7 +173,45 @@ class Validator
     }
 
     /**
-     * Vérifier le format du fichier joint
+     * Vérifie si le fichier a bien été uploadé
+     * @param string $key
+     * @return Validator
+     */
+    public function uploaded(string $key): self
+    {
+        $file = $this->getValue($key);
+        if ($file === null || $file->getError() !== UPLOAD_ERR_OK) {
+            $this->addError($key, 'uploaded');
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie si l'email est valid
+     * @param string $key
+     * @return Validator
+     */
+    public function email(string $key): self
+    {
+        $value = $this->getValue($key);
+        if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+            $this->addError($key, 'email');
+        }
+        return $this;
+    }
+
+    public function confirm(string $key): self
+    {
+        $value = $this->getValue($key);
+        $valueConfirm = $this->getValue($key . '_confirm');
+        if ($valueConfirm !== $value) {
+            $this->addError($key, 'confirm');
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie le format de fichier
      * @param string $key
      * @param array $extensions
      * @return Validator
@@ -185,28 +225,14 @@ class Validator
             $extension = mb_strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
             $expectedType = self::MIME_TYPES[$extension] ?? null;
             if (!in_array($extension, $extensions) || $expectedType !== $type) {
-                $this->addError($key, 'file', [join(',', $extensions)]);
+                $this->addError($key, 'filetype', [join(',', $extensions)]);
             }
         }
+
         return $this;
     }
 
     /**
-     * Vérifie si le fichier a bien été uploadé
-     * @param string $key
-     * @return $this
-     */
-    public function uploaded(string $key): self
-    {
-        $file = $this->getValue($key);
-        if ($file === null || $file->getError() !== UPLOAD_ERR_OK) {
-            $this->addError($key, 'uploaded');
-        }
-        return $this;
-    }
-
-    /**
-     * Vérifie si des erreurs sont présentes
      * @return bool
      */
     public function isValid(): bool
@@ -225,6 +251,7 @@ class Validator
 
     /**
      * Ajoute une erreur
+     *
      * @param string $key
      * @param string $rule
      * @param array $attributes
@@ -234,10 +261,6 @@ class Validator
         $this->errors[$key] = new ValidationError($key, $rule, $attributes);
     }
 
-    /**
-     * @param string $key
-     * @return mixed|null
-     */
     private function getValue(string $key)
     {
         if (array_key_exists($key, $this->params)) {
