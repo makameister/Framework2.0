@@ -34,11 +34,11 @@ $container = $app->getContainer();
 $app->pipe(Whoops::class)
     ->pipe(RedirectToHomeMiddleware::class)
     ->pipe(TrailingSlashMiddleware::class)
+    ->pipe(ForbiddenMiddleware::class)
+    ->pipe($container->get('admin.prefix'), LoggedInMiddleware::class)
     ->pipe(MethodMiddleware::class)
     ->pipe(CsrfMiddleware::class)
     ->pipe(RouterMiddleware::class)
-    ->pipe(ForbiddenMiddleware::class)
-    ->pipe($container->get('admin.prefix'), LoggedInMiddleware::class)
     ->pipe(DispatcherMiddleware::class)
     ->pipe(NotFoundMiddleware::class);
 

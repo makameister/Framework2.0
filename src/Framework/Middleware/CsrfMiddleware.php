@@ -10,49 +10,40 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CsrfMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var string
-     */
-    private $formKey = '_csrf';
 
     /**
      * @var string
      */
-    private $sessionKey = 'csrf';
+    private $formKey;
 
     /**
-     * @var \ArrayAccess
+     * @var string
      */
-    private $session;
+    private $sessionKey;
 
     /**
      * @var int
      */
     private $limit;
 
+    /**
+     * @var \ArrayAccess
+     */
+    private $session;
+
     public function __construct(
-        $session,
+        &$session,
         int $limit = 50,
         string $formKey = '_csrf',
         string $sessionKey = 'csrf'
     ) {
         $this->validSession($session);
-        $this->session = $session;
+        $this->session = &$session;
         $this->formKey = $formKey;
         $this->sessionKey = $sessionKey;
         $this->limit = $limit;
     }
 
-    /**
-     * Process an incoming server request and return a response, optionally delegating
-     * to the next middleware component to create the response.
-     *
-     * @param ServerRequestInterface $request
-     * @param DelegateInterface $delegate
-     *
-     * @return ResponseInterface
-     * @throws \Exception
-     */
     public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
     {
         if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'])) {
@@ -88,10 +79,6 @@ class CsrfMiddleware implements MiddlewareInterface
         throw new CsrfInvalidException();
     }
 
-    /**
-     * Retire les tokens utilisés
-     * @param $token
-     */
     private function useToken($token): void
     {
         $tokens = array_filter($this->session[$this->sessionKey], function ($t) use ($token) {
@@ -112,7 +99,7 @@ class CsrfMiddleware implements MiddlewareInterface
     private function validSession($session)
     {
         if (!is_array($session) && !$session instanceof \ArrayAccess) {
-            throw new \TypeError('La session passée au middleware csrf n\'est pas traitable comme un tableau');
+            throw new \TypeError('La session passé au middleware CSRF n\'est pas traitable comme un tableau');
         }
     }
 

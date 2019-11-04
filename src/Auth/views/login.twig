@@ -3,18 +3,22 @@
 
 {% block body %}
 
-
-  {% if flash('error') %}
-    <div class="alert alert-danger">
-      {{ flash('error') }}
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-6">
+        {% if flash('error') %}
+          <div class="alert alert-danger">
+            {{ flash('error') }}
+          </div>
+        {% endif %}
+        <form action="{{ path('auth.login') }}" method="post">
+          {{ csrf_input() }}
+          {{ field('email', null, 'Adresse email') }}
+          {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
+          <button class="btn btn-primary center">Se connecter</button>
+        </form>
     </div>
-  {% endif %}
-
-  <form action="{{ path('auth.login') }}" method="post">
-    {{ csrf_input() }}
-    {{ field('email', null, 'Adresse email') }}
-    {{ field('password', null, 'Mot de passe', {type: 'password'}) }}
-    <button class="btn btn-primary">Se connecter</button>
-  </form>
+    <div class="col-md-2"></div>
+</div>
 
 {% endblock %}

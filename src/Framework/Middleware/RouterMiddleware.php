@@ -1,5 +1,4 @@
 <?php
-
 namespace Framework\Middleware;
 
 use Framework\Router;
@@ -7,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RouterMiddleware
 {
+
     /**
      * @var Router
      */

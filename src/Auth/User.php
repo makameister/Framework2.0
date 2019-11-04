@@ -5,28 +5,16 @@ class User implements \Framework\Auth\User
 {
     public $id;
 
-    public $firstname;
-
-    public $lastname;
-
     public $email;
 
     public $password;
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getFirstName(): string
+    public function getEmail(): string
     {
-        return $this->firstname;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastname(): string
-    {
-        return $this->lastname;
+        return $this->email;
     }
 
     /**

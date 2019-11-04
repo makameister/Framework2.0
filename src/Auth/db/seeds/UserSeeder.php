@@ -17,7 +17,7 @@ class UserSeeder extends AbstractSeed
                 'firstname' => 'Franke',
                 'lastname' => 'Guillaume',
                 'email'    => 'user@user.fr',
-                'password' => password_hash('admin', PASSWORD_DEFAULT)
+                'password' => password_hash('user', PASSWORD_DEFAULT)
             ])
             ->save();
     }

@@ -1,17 +1,21 @@
 <?php
-
 namespace Framework\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class MethodMiddleware
+class MethodMiddleware implements MiddlewareInterface
 {
-    public function __invoke(ServerRequestInterface $request, callable $next)
+
+    public function process(ServerRequestInterface $request, DelegateInterface $next)
     {
         $parsedBody = $request->getParsedBody();
-        if (array_key_exists('_method', $parsedBody) && in_array($parsedBody['_method'], ['DELETE', 'PUT'])) {
+        if (array_key_exists('_method', $parsedBody) &&
+            in_array($parsedBody['_method'], ['DELETE', 'PUT'])
+        ) {
             $request = $request->withMethod($parsedBody['_method']);
         }
-        return $next($request);
+        return $next->process($request);
     }
 }

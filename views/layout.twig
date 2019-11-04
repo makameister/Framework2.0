@@ -17,11 +17,15 @@
         <li class="nav-item {{ is_subpath('blog.index') ? 'active' }}">
             <a class="nav-link" href="{{ path('blog.index') }}">Blog</a>
         </li>
+        {% if current_user() %}
+            <li>
+                <a class="nav-link" href="{{ path('account') }}">Mon profil</a>
+            </li>
+        {% endif %}
     </ul>
     <div class="navbar-nav">
         {% if current_user() %}
-            <div class="navbar-text">Connecté en tant que {{ current_user().firstname }} {{ current_user().lastname }}</div>
-          &nbsp; &nbsp;&nbsp; &nbsp;
+            <div class="navbar-text">Connecté en tant que {{ current_user().firstname }} {{ current_user().lastname }}</div>&nbsp;
             <form method="post" action="{{ path('auth.logout') }}">
               {{ csrf_input() }}
                 <button class="btn btn-danger">Se déconnecter</button>
