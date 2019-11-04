@@ -50,5 +50,9 @@ return [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             ]
         );
-    }
+    },
+    // MAILER
+    'mail.to'    => 'admin@admin.fr',
+    'mail.from'    => 'no-reply@admin.fr',
+    Swift_Mailer::class => \DI\factory(\Framework\SwiftMailerFactory::class)
 ];

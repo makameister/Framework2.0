@@ -22,7 +22,9 @@
         "php-di/php-di": "5.4",
         "pagerfanta/pagerfanta": "^2.1",
         "doctrine/cache": "~1.4",
-        "http-interop/http-middleware": "0.4.1"
+        "http-interop/http-middleware": "0.4.1",
+        "swiftmailer/swiftmailer": "^6.0",
+        "ramsey/uuid": "^3.7"
     },
     "require-dev": {
         "middlewares/whoops": "^0.4.1",
