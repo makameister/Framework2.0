@@ -9,6 +9,8 @@ class User implements \Framework\Auth\User
 
     public $password;
 
+    public $role;
+
     /**
      * @return mixed
      */
@@ -18,10 +20,11 @@ class User implements \Framework\Auth\User
     }
 
     /**
-     * @return string[]
+     * @override
+     * @return string
      */
-    public function getRoles(): array
+    public function getRole(): string
     {
-        return [];
+        return $this->role;
     }
 }

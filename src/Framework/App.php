@@ -62,11 +62,11 @@ class App implements DelegateInterface
     /**
      * Ajoute un middleware
      *
-     * @param string $routePrefix
-     * @param null|string $middleware
+     * @param string|callable|MiddlewareInterface $routePrefix
+     * @param null|string|callable|MiddlewareInterface $middleware
      * @return App
      */
-    public function pipe(string $routePrefix, ?string $middleware = null): self
+    public function pipe($routePrefix, $middleware = null): self
     {
         if ($middleware === null) {
             $this->middlewares[] = $routePrefix;
