@@ -2,10 +2,10 @@
 namespace Framework\Auth;
 
 use Framework\Auth;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class RoleMiddleware implements MiddlewareInterface
 {
@@ -25,12 +25,12 @@ class RoleMiddleware implements MiddlewareInterface
         $this->role = $role;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $this->auth->getUser();
-        if ($user === null || !in_array($this->role, [$user->getRole()])) {
+        if ($user === null || !in_array($this->role, $user->getRoles())) {
             throw new ForbiddenException();
         }
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

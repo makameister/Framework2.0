@@ -31,7 +31,7 @@ class RouterTwigExtension extends \Twig_Extension
     public function isSubPath(string $path): bool
     {
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        $expecteUri = $this->router->generateUri($path);
-        return strpos($uri, $expecteUri) !== false;
+        $expectedUri = $this->router->generateUri($path);
+        return strpos($uri, $expectedUri) !== false;
     }
 }

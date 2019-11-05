@@ -2,13 +2,13 @@
 namespace Framework\Middleware;
 
 use GuzzleHttp\Psr7\Response;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class CombinedMiddlewareDelegate implements DelegateInterface
+class CombinedMiddlewareDelegate implements RequestHandlerInterface
 {
 
     /**
@@ -25,24 +25,24 @@ class CombinedMiddlewareDelegate implements DelegateInterface
      */
     private $container;
     /**
-     * @var DelegateInterface
+     * @var RequestHandlerInterface
      */
-    private $delegate;
+    private $handler;
 
-    public function __construct(ContainerInterface $container, array $middlewares, DelegateInterface $delegate)
+    public function __construct(ContainerInterface $container, array $middlewares, RequestHandlerInterface $handler)
     {
         $this->middlewares = $middlewares;
         $this->container = $container;
-        $this->delegate = $delegate;
+        $this->handler = $handler;
     }
 
-    public function process(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $middleware = $this->getMiddleware();
         if (is_null($middleware)) {
-            return $this->delegate->process($request);
+            return $this->handler->handle($request);
         } elseif (is_callable($middleware)) {
-            $response = call_user_func_array($middleware, [$request, [$this, 'process']]);
+            $response = call_user_func_array($middleware, [$request, [$this, 'handle']]);
             if (is_string($response)) {
                 return new Response(200, [], $response);
             }

@@ -1,8 +1,8 @@
 <?php
 namespace Framework\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,16 +32,16 @@ class RoutePrefixedMiddleware implements MiddlewareInterface
         $this->middleware = $middleware;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
         if (strpos($path, $this->prefix) === 0) {
             if (is_string($this->middleware)) {
-                return $this->container->get($this->middleware)->process($request, $delegate);
+                return $this->container->get($this->middleware)->process($request, $handler);
             } else {
-                return $this->middleware->process($request, $delegate);
+                return $this->middleware->process($request, $handler);
             }
         }
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

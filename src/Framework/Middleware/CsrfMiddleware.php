@@ -3,8 +3,8 @@
 namespace Framework\Middleware;
 
 use Framework\Exception\CsrfInvalidException;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -44,7 +44,7 @@ class CsrfMiddleware implements MiddlewareInterface
         $this->limit = $limit;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'])) {
             $params = $request->getParsedBody() ?: [];
@@ -54,13 +54,13 @@ class CsrfMiddleware implements MiddlewareInterface
                 $csrfList = $this->session[$this->sessionKey] ?? [];
                 if (in_array($params[$this->formKey], $csrfList)) {
                     $this->useToken($params[$this->formKey]);
-                    return $delegate->process($request);
+                    return $handler->handle($request);
                 } else {
                     $this->reject();
                 }
             }
         } else {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
     }
 

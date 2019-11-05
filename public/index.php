@@ -2,10 +2,12 @@
 
 use App\Account\AccountModule;
 use App\Admin\AdminModule;
+use App\Ajax\AjaxModule;
 use App\Auth\AuthModule;
 use App\Auth\ForbiddenMiddleware;
 use App\Blog\BlogModule;
 use App\Home\HomeModule;
+use App\Test\TestModule;
 use Framework\Auth\LoggedInMiddleware;
 use Framework\Auth\RoleMiddlewareFactory;
 use Framework\Middleware\CsrfMiddleware;
@@ -29,10 +31,13 @@ $app = (new \Framework\App('config/config.php'))
     ->addModule(AdminModule::class)
     ->addModule(BlogModule::class)
     ->addModule(HomeModule::class)
+    ->addModule(TestModule::class)
+    ->addModule(AjaxModule::class)
     ->addModule(AuthModule::class)
     ->addModule(AccountModule::class);
 
 $container = $app->getContainer();
+
 $app->pipe(Whoops::class)
     ->pipe(RedirectToHomeMiddleware::class)
     ->pipe(TrailingSlashMiddleware::class)

@@ -2,8 +2,8 @@
 namespace Framework\Middleware;
 
 use Framework\Renderer\RendererInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,7 +20,7 @@ class RendererRequestMiddleware implements MiddlewareInterface
         $this->renderer = $renderer;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $domain = sprintf(
             '%s://%s%s',
@@ -29,6 +29,6 @@ class RendererRequestMiddleware implements MiddlewareInterface
             $request->getUri()->getPort() ? ':' . $request->getUri()->getPort() : ''
         );
         $this->renderer->addGlobal('domain', $domain);
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }

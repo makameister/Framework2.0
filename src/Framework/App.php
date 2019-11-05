@@ -7,13 +7,12 @@ use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Framework\Middleware\CombinedMiddleware;
 use Framework\Middleware\RoutePrefixedMiddleware;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class App implements DelegateInterface
+class App implements RequestHandlerInterface
 {
 
     /**
@@ -21,10 +20,11 @@ class App implements DelegateInterface
      * @var array
      */
     private $modules = [];
+
     /**
-     * @var string
+     * @var array
      */
-    private $definition;
+    private $definitions;
 
     /**
      * @var ContainerInterface
@@ -34,17 +34,26 @@ class App implements DelegateInterface
     /**
      * @var string[]
      */
-    private $middlewares;
+    private $middlewares = [];
 
     /**
      * @var int
      */
     private $index = 0;
 
-    public function __construct(string $definition)
+    /**
+     * App constructor.
+     * @param null|string|array $definitions
+     */
+    public function __construct($definitions = [])
     {
-
-        $this->definition = $definition;
+        if (is_string($definitions)) {
+            $definitions = [$definitions];
+        }
+        if (!$this->isSequential($definitions)) {
+            $definitions = [$definitions];
+        }
+        $this->definitions = $definitions;
     }
 
     /**
@@ -76,7 +85,7 @@ class App implements DelegateInterface
         return $this;
     }
 
-    public function process(ServerRequestInterface $request): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->index++;
         if ($this->index > 1) {
@@ -91,7 +100,7 @@ class App implements DelegateInterface
         foreach ($this->modules as $module) {
             $this->getContainer()->get($module);
         }
-        return $this->process($request);
+        return $this->handle($request);
     }
 
     /**
@@ -106,12 +115,17 @@ class App implements DelegateInterface
                 $builder->setDefinitionCache(new FilesystemCache('tmp/di'));
                 $builder->writeProxiesToFile(true, 'tmp/proxies');
             }
-            $builder->addDefinitions($this->definition);
+            foreach ($this->definitions as $definition) {
+                $builder->addDefinitions($definition);
+            }
             foreach ($this->modules as $module) {
                 if ($module::DEFINITIONS) {
                     $builder->addDefinitions($module::DEFINITIONS);
                 }
             }
+            $builder->addDefinitions([
+                App::class => $this
+            ]);
             $this->container = $builder->build();
         }
         return $this->container;
@@ -123,5 +137,13 @@ class App implements DelegateInterface
     public function getModules(): array
     {
         return $this->modules;
+    }
+
+    private function isSequential(array $array): bool
+    {
+        if (empty($array)) {
+            return true;
+        }
+        return array_keys($array) === range(0, count($array) - 1);
     }
 }

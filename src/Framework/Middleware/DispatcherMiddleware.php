@@ -4,8 +4,8 @@ namespace Framework\Middleware;
 use DI\Container;
 use Framework\Router;
 use GuzzleHttp\Psr7\Response;
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,16 +22,16 @@ class DispatcherMiddleware implements MiddlewareInterface
         $this->container = $container;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute(Router\Route::class);
         if (is_null($route)) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
         $callback = $route->getCallback();
         if (!is_array($callback)) {
             $callback = [$callback];
         }
-        return (new CombinedMiddleware($this->container, $callback))->process($request, $delegate);
+        return (new CombinedMiddleware($this->container, $callback))->process($request, $handler);
     }
 }

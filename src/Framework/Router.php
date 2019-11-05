@@ -1,8 +1,10 @@
 <?php
+
 namespace Framework;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Framework\Middleware\CallableMiddleware;
 use Framework\Router\Route;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route as ZendRoute;
 
@@ -20,7 +22,7 @@ class Router
     {
         $this->router = new FastRouteRouter(null, null, [
             FastRouteRouter::CONFIG_CACHE_ENABLED => !is_null($cache),
-            FastRouteRouter::CONFIG_CACHE_FILE => $cache
+            FastRouteRouter::CONFIG_CACHE_FILE    => $cache
         ]);
     }
 
@@ -31,7 +33,7 @@ class Router
      */
     public function get(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, $callable, ['GET'], $name));
+        $this->router->addRoute(new ZendRoute($path, new CallableMiddleware($callable), ['GET'], $name));
     }
 
     /**
@@ -41,7 +43,7 @@ class Router
      */
     public function post(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, $callable, ['POST'], $name));
+        $this->router->addRoute(new ZendRoute($path, new CallableMiddleware($callable), ['POST'], $name));
     }
 
     /**
@@ -51,7 +53,7 @@ class Router
      */
     public function delete(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, $callable, ['DELETE'], $name));
+        $this->router->addRoute(new ZendRoute($path, new CallableMiddleware($callable), ['DELETE'], $name));
     }
 
     /**
@@ -61,18 +63,19 @@ class Router
      */
     public function any(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, $callable, ['DELETE', 'POST', 'GET', 'PUT'], $name));
+        $this->router->addRoute(new ZendRoute($path, new CallableMiddleware($callable), ['DELETE', 'POST', 'GET', 'PUT'], $name));
     }
 
     /**
-     * Génère les routes du crud
+     * Génère les route du CRUD
+     *
      * @param string $prefixPath
      * @param $callable
-     * @param string|null $prefixName
+     * @param string $prefixName
      */
-    public function crud(string $prefixPath, $callable, ?string $prefixName)
+    public function crud(string $prefixPath, $callable, string $prefixName)
     {
-        $this->get($prefixPath, $callable, "$prefixName.index");
+        $this->get("$prefixPath", $callable, "$prefixName.index");
         $this->get("$prefixPath/new", $callable, "$prefixName.create");
         $this->post("$prefixPath/new", $callable);
         $this->get("$prefixPath/{id:\d+}", $callable, "$prefixName.edit");
@@ -90,19 +93,13 @@ class Router
         if ($result->isSuccess()) {
             return new Route(
                 $result->getMatchedRouteName(),
-                $result->getMatchedMiddleware(),
+                $result->getMatchedRoute()->getMiddleware()->getCallable(),
                 $result->getMatchedParams()
             );
         }
         return null;
     }
 
-    /**
-     * @param string $name
-     * @param array $params
-     * @param array $queryParams
-     * @return string|null
-     */
     public function generateUri(string $name, array $params = [], array $queryParams = []): ?string
     {
         $uri = $this->router->generateUri($name, $params);
@@ -112,4 +109,3 @@ class Router
         return $uri;
     }
 }
-
