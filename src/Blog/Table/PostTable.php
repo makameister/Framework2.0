@@ -41,4 +41,10 @@ class PostTable extends Table
     {
         return $this->findPublic()->where("p.id = $postId")->fetch();
     }
+
+    public function searchForAjax(int $value)
+    {
+        $sql = "SELECT * FROM posts WHERE category_id = " . $value;
+        return $this->pdo->prepare($sql)->execute();
+    }
 }

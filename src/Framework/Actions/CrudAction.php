@@ -103,7 +103,6 @@ class CrudAction
     public function edit(Request $request)
     {
         $item = $this->table->find($request->getAttribute('id'));
-
         if ($request->getMethod() === 'POST') {
             $validator = $this->getValidator($request);
             if ($validator->isValid()) {

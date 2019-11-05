@@ -1,0 +1,34 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+  test
+{% endblock %}
+
+{% block body %}
+    <h1>Page de test</h1>
+    {{ csrf_input() }}
+
+    {{ field('categories', category.id, 'Categories', {options: categories}) }}
+
+    {{ field('posts', post.id, 'Posts', {options: {}}) }}
+
+    {{ dump(categories) }}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $("#categories").change(function(){
+        var value = document.getElementById('categories').value;
+        var csrf = document.querySelector('input[name="_csrf"]').getAttribute('value');
+        $.ajax({
+            url: "{{ path('ajax.posts') }}",
+            type: "POST",
+            data: {type: value, _csrf: csrf},
+            dataType: 'JSON',
+            success: function(result){
+                console.log(result);
+            }});
+    });
+</script>
+{% endblock %}

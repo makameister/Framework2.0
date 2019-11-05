@@ -14,6 +14,7 @@ use Framework\Twig\FormExtension;
 use Framework\Twig\PagerFantaExtension;
 use Framework\Twig\TextExtension;
 use Framework\Twig\TimeExtension;
+use App\Framework\Twig\ModuleExtension;
 use Psr\Container\ContainerInterface;
 
 return [
@@ -31,6 +32,7 @@ return [
         \DI\get(TimeExtension::class),
         \DI\get(FlashExtension::class),
         \DI\get(FormExtension::class),
+        \DI\get(ModuleExtension::class),
         \DI\get(CsrfExtension::class)
     ],
     SessionInterface::class => \DI\Object(PHPSession::class),

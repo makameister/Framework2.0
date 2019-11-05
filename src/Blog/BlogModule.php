@@ -6,15 +6,14 @@ use App\Blog\Actions\CategoryShowAction;
 use App\Blog\Actions\PostCrudAction;
 use App\Blog\Actions\PostIndexAction;
 use App\Blog\Actions\PostShowAction;
+use App\Blog\Actions\TestIndexAction;
 use DI\Container;
 use Framework\Module;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
-use Psr\Container\ContainerInterface;
 
 class BlogModule extends Module
 {
-
     const DEFINITIONS = __DIR__ . '/config.php';
 
     const MIGRATIONS =  __DIR__ . '/db/migrations';

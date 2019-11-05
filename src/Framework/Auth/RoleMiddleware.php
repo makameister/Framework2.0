@@ -28,7 +28,7 @@ class RoleMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $user = $this->auth->getUser();
-        if ($user === null || !in_array($this->role, $user->getRoles())) {
+        if ($user === null || !in_array($this->role, [$user->getRole()])) {
             throw new ForbiddenException();
         }
         return $handler->handle($request);
