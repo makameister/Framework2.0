@@ -16,6 +16,7 @@ use Framework\Middleware\RedirectToHomeMiddleware;
 use Framework\Middleware\RendererRequestMiddleware;
 use Framework\Middleware\RouterMiddleware;
 use Framework\Middleware\TrailingSlashMiddleware;
+use Framework\Middleware\XMLHttpRequestMiddleware;
 use GuzzleHttp\Psr7\ServerRequest;
 use Middlewares\Whoops;
 
@@ -47,6 +48,7 @@ $app->pipe(Whoops::class)
     ->pipe(MethodMiddleware::class)
     ->pipe(RendererRequestMiddleware::class)
     ->pipe(CsrfMiddleware::class)
+    ->pipe(XMLHttpRequestMiddleware::class)
     ->pipe(RouterMiddleware::class)
     ->pipe(DispatcherMiddleware::class)
     ->pipe(NotFoundMiddleware::class);

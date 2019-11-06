@@ -27,7 +27,13 @@
             data: {type: value, _csrf: csrf},
             dataType: 'JSON',
             success: function(result){
-                console.log(result);
+                var field = document.getElementById('posts');
+                for (var i = 0 ; i < result.length ; i++) {
+                    var item = document.createElement('option');
+                    item.value = result[i][0];
+                    item.text = result[i][1];
+                    field.appendChild(item);
+                }
             }});
     });
 </script>

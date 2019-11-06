@@ -47,16 +47,20 @@ class CsrfMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'])) {
-            $params = $request->getParsedBody() ?: [];
-            if (!array_key_exists($this->formKey, $params)) {
-                $this->reject();
+            if (isset($request->getServerParams()['HTTP_X_REQUESTED_WITH'])) {
+                return $handler->handle($request);
             } else {
-                $csrfList = $this->session[$this->sessionKey] ?? [];
-                if (in_array($params[$this->formKey], $csrfList)) {
-                    $this->useToken($params[$this->formKey]);
-                    return $handler->handle($request);
-                } else {
+                $params = $request->getParsedBody() ?: [];
+                if (!array_key_exists($this->formKey, $params)) {
                     $this->reject();
+                } else {
+                    $csrfList = $this->session[$this->sessionKey] ?? [];
+                    if (in_array($params[$this->formKey], $csrfList)) {
+                        $this->useToken($params[$this->formKey]);
+                        return $handler->handle($request);
+                    } else {
+                        $this->reject();
+                    }
                 }
             }
         } else {

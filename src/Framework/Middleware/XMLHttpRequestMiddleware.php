@@ -21,6 +21,7 @@ class XMLHttpRequestMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (isset($request->getServerParams()['HTTP_X_REQUESTED_WITH'])) {
+            /* Implementer un système de token pour les requêtes ajax  */
             //var_dump($request);
             //echo json_encode([0 => 'a', 1 => 'b']);
             //die();
